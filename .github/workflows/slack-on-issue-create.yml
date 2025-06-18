@@ -28,7 +28,7 @@ jobs:
       run: |
         import requests
         import json
-
+        headers = {'Content-Type': 'application/json'}
         message = {
             "text": f"New issue created in {REPOSITORY_NAME}: *{ISSUE_TITLE}*\n{ISSUE_BODY}",
             "attachments": [
@@ -46,5 +46,5 @@ jobs:
             ]
         }
 
-        response = requests.post(SLACK_WEBHOOK_URL, json=message)
+        response = requests.post(SLACK_WEBHOOK_URL, headers=headers, data=message)
         print(response.text)
