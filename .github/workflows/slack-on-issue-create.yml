@@ -2,7 +2,7 @@ name: Notify Slack on Issue Creation
 
 on:
   issues:
-    types: [created]
+    types: [opened]
 
 jobs:
   send-notification:
