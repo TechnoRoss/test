@@ -1,0 +1,50 @@
+name: Notify Slack on Issue Creation
+
+on:
+  issues:
+    types: [created]
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Send notification to Slack
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        ISSUE_TITLE: ${{ github.event.issue.title }}
+        ISSUE_BODY: ${{ github.event.issue.body }}
+        REPOSITORY_NAME: ${{ github.repository }}
+      run: |
+        import requests
+        import json
+
+        message = {
+            "text": f"New issue created in {REPOSITORY_NAME}: *{ISSUE_TITLE}*\n{ISSUE_BODY}",
+            "attachments": [
+                {
+                    "fallback": f"Issue created: {ISSUE_TITLE}",
+                    "color": "#36a64f",
+                    "pretext": "A new issue has been opened",
+                    "author_name": github.actor,
+                    "author_link": github.event.issue.html_url,
+                    "author_icon": "https://github.com/github.png",
+                    "title": ISSUE_TITLE,
+                    "title_link": github.event.issue.html_url,
+                    "text": ISSUE_BODY
+                }
+            ]
+        }
+
+        response = requests.post(SLACK_WEBHOOK_URL, json=message)
+        print(response.text)
