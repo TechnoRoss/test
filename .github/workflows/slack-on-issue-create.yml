@@ -25,7 +25,6 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           REPOSITORY_NAME: ${{ github.repository }}
-          GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_EVENT_ISSUE_HTML_URL: ${{ github.event.issue.html_url }}
         run: |
           python <<EOF
@@ -34,20 +33,7 @@ jobs:
           import json
           headers = {'Content-Type': 'application/json'}
           message = {
-              "text": f"New issue created in {os.environ['REPOSITORY_NAME']}: *{os.environ['ISSUE_TITLE']}*\n{os.environ['ISSUE_BODY']}",
-              "attachments": [
-                  {
-                      "fallback": f"Issue created: {os.environ['ISSUE_TITLE']}",
-                      "color": "#36a64f",
-                      "pretext": "A new issue has been opened",
-                      "author_name": os.environ['GITHUB_ACTOR'],
-                      "author_link": os.environ['GITHUB_EVENT_ISSUE_HTML_URL'],
-                      "author_icon": "https://github.com/github.png",
-                      "title": os.environ['ISSUE_TITLE'],
-                      "title_link": os.environ['GITHUB_EVENT_ISSUE_HTML_URL'],
-                      "text": os.environ['ISSUE_BODY']
-                  }
-              ]
+              "text": f"New issue created in {os.environ['REPOSITORY_NAME']}: *{os.environ['ISSUE_TITLE']}*\n<{os.environ['GITHUB_EVENT_ISSUE_HTML_URL']}|View Issue>"
           }
           response = requests.post(os.environ['SLACK_WEBHOOK_URL'], headers=headers, data=json.dumps(message))
           print(response.text)
