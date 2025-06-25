@@ -33,7 +33,10 @@ jobs:
           import json
           headers = {'Content-Type': 'application/json'}
           message = {
-              "text": f"New issue created in {os.environ['REPOSITORY_NAME']}: *{os.environ['ISSUE_TITLE']}*\n{os.environ['GITHUB_EVENT_ISSUE_HTML_URL']}"
+              "text": f"New issue created in {os.environ['REPOSITORY_NAME']}: *{os.environ['ISSUE_TITLE']}*\n{os.environ['GITHUB_EVENT_ISSUE_HTML_URL']}",
+              "REPOSITORY_NAME": "{os.environ['REPOSITORY_NAME']},
+              "GITHUB_ISSUE": "{os.environ['GITHUB_EVENT_ISSUE_HTML_URL']}",
+              "ISSUE_TITLE": "{os.environ['ISSUE_TITLE']}"
           }
           response = requests.post(os.environ['SLACK_WEBHOOK_URL'], headers=headers, data=json.dumps(message))
           print(response.text)
